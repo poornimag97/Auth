@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head') %>
+<body>
+    <%- include('./partials/nav') %>
+
+    <form action="/login" method="post">
+    <h2>Login</h2>
+    <label for="email">Email</label><br>
+    <div class="email"></div><br>
+    <input type="text" name="email" id="email"><br>
+    <label for="password">Password</label><br>
+    <input type="password" name="password" id="password"> <br> 
+    <div class="password"></div> <br>
+    <button type="submit">Submit</button><br>
+    <span>Don't have an account?</span><a href="/signup">Register</a><br>
+</form>
+<script>
+    // let form=document.querySelector("form")
+    // form.addEventListener("submit",(e)=>{
+    //     e.preventDefault()
+    //     let email=form.email.value
+    //     let password=form.password.value
+
+    //     console.log(email,password);
+    // })
+    let form=document.querySelector("form")
+    let emailError=document.querySelector(".email")
+    let passwordError=document.querySelector(".password")
+    form.addEventListener("submit",async(e)=>{
+        e.preventDefault()
+        let email=form.email.value
+        let password=form.password.value
+        let body={email,password}
+
+        // console.log(email,password);
+        try {
+         let res= await fetch("/login",{
+                method:'POST',
+                headers:{"content-type":"application/json"},
+                body:JSON.stringify(body)
+
+            })
+            let data=await res.json()
+            console.log(data);
+            if(data.errors){
+                emailError.textContent=data.errors.email
+                passwordError.textContent=data.errors.password
+            }
+            if(data.user){
+                location.assign("/")
+            }
+        } catch(err)  {
+            console.log(err,"error in posting");
+        }
+    })
+</script>
+</body>
+</html>
